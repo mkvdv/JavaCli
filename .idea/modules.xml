@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JavaCli.iml" filepath="$PROJECT_DIR$/.idea/modules/JavaCli.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JavaCli_main.iml" filepath="$PROJECT_DIR$/.idea/modules/JavaCli_main.iml" group="JavaCli" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/JavaCli_test.iml" filepath="$PROJECT_DIR$/.idea/modules/JavaCli_test.iml" group="JavaCli" />
+    </modules>
+  </component>
+</project>
