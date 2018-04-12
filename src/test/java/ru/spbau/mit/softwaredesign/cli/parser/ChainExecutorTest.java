@@ -8,6 +8,7 @@ import ru.spbau.mit.softwaredesign.cli.errors.PipelineException;
 import ru.spbau.mit.softwaredesign.cli.errors.UnknownExternalCommandException;
 import ru.spbau.mit.softwaredesign.cli.pipe.InputBuffer;
 import ru.spbau.mit.softwaredesign.cli.pipe.OutputBuffer;
+import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -58,7 +59,8 @@ public class ChainExecutorTest {
 
     @Test
     public void cat_that_is_not_in_the_first_place_in_the_pipeline_redirects_input_to_output() throws UnknownExternalCommandException, PipelineException, ExpectedExitException {
-        String filename = "cattest.txt";
+        String curDir = BoundVariablesStorage.getCurrentPath();
+        String filename = curDir + "/" + "cattest.txt";
         List<String> tokens = Arrays.asList("wc", " ", filename, " ", "|", " ", "cat");
         executor = new ChainExecutor(tokens);
         executor.execute();

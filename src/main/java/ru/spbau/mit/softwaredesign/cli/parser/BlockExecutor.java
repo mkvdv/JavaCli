@@ -1,11 +1,10 @@
 package ru.spbau.mit.softwaredesign.cli.parser;
 
-import ru.spbau.mit.softwaredesign.cli.errors.ErrorMessage;
+import ru.spbau.mit.softwaredesign.cli.commands.*;
 import ru.spbau.mit.softwaredesign.cli.errors.ExpectedExitException;
 import ru.spbau.mit.softwaredesign.cli.errors.UnknownExternalCommandException;
-import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
-import ru.spbau.mit.softwaredesign.cli.commands.*;
 import ru.spbau.mit.softwaredesign.cli.resourses.MainCommands;
+import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
 import ru.spbau.mit.softwaredesign.cli.utils.TokenizerHelper;
 
 import java.util.*;
@@ -27,16 +26,19 @@ public class BlockExecutor {
         boundCommands.put(MainCommands.COMMAND_WC, new CommandWc());
         boundCommands.put(MainCommands.COMMAND_PWD, new CommandPwd());
         boundCommands.put(MainCommands.COMMAND_EXIT, new CommandExit());
+        boundCommands.put(MainCommands.COMMAND_LS, new CommandLs());
+        boundCommands.put(MainCommands.COMMAND_CD, new CommandCd());
     }
 
     /**
      * Receives the list of one-pipe command line tokens, handles first token and transfers control
      * to module corresponding to the entity of this token.
-     *
+     * <p>
      * The following situations are possible:
      * 1. First token refers to one of the main commands (e.g. cat, echo, wc, pwd, exit)
      * 2. First token declares a variable name and therefore the second token must be '='
      * 3. Otherwise, first token must refer to an external command
+     *
      * @param tokenList list of command line tokens (after substitutions)
      */
     public void execute(List<String> tokenList) throws ExpectedExitException, UnknownExternalCommandException {
@@ -72,9 +74,10 @@ public class BlockExecutor {
 
     /**
      * Checks if given variable name is correct.
-     *
+     * <p>
      * Variable name is considered correct if it starts with Latin symbol or underscore
      * and the rest consists of Latin symbols, numbers, and underscores.
+     *
      * @param variableName variable name
      * @return boolean value showing if given name satisfies the rule above.
      */
@@ -84,6 +87,7 @@ public class BlockExecutor {
 
     /**
      * Trim leading and trailing whitespace tokens.
+     *
      * @param tokenList list of command line tokens (after substitutions)
      * @return trimmed list
      */

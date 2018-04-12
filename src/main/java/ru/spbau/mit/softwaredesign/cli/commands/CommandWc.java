@@ -1,9 +1,11 @@
 package ru.spbau.mit.softwaredesign.cli.commands;
 
 import ru.spbau.mit.softwaredesign.cli.errors.ErrorMessage;
+import ru.spbau.mit.softwaredesign.cli.errors.WrongArgumentException;
 import ru.spbau.mit.softwaredesign.cli.pipe.BlockCounter;
 import ru.spbau.mit.softwaredesign.cli.pipe.InputBuffer;
 import ru.spbau.mit.softwaredesign.cli.pipe.OutputBuffer;
+import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,8 +33,8 @@ public class CommandWc implements AbstractCommand {
     /**
      * Implements "wc" command without parameters.
      * Behavior depends of position of this command in the pipeline:
-     *  - if this is the first command in the pipeline, then calculate the user input.
-     *  - otherwise calculate the input buffer.
+     * - if this is the first command in the pipeline, then calculate the user input.
+     * - otherwise calculate the input buffer.
      *
      * @throws IOException for the case of input/output error
      */
@@ -59,6 +61,13 @@ public class CommandWc implements AbstractCommand {
     public void execute(List<String> filenames) {
         Charset charset = Charset.forName("UTF-8");
         for (String filename : filenames) {
+            try {
+                filename = BoundVariablesStorage.getCorrectAbsolutePathOfFile(filename).getAbsolutePath();
+            } catch (WrongArgumentException e) {
+                ErrorMessage.print(ErrorMessage.FILE_NOT_FOUND, "wc: " + filename);
+                continue;
+            }
+
             WcCalculator nextFileCalculator = new WcCalculator();
             try (BufferedReader reader = Files.newBufferedReader(Paths.get(filename), charset)) {
                 String line;
@@ -132,6 +141,7 @@ public class CommandWc implements AbstractCommand {
          * Add lines, words and characters count from given string to counters.
          * Lines are separated by system-specific separator.
          * Words are separated by one or more whitespaces.
+         *
          * @param data Data for calculating
          */
         public void calculateAdd(String data) {
@@ -158,6 +168,7 @@ public class CommandWc implements AbstractCommand {
          * Set lines, words and characters count from given string to counters.
          * Lines are separated by system-specific separator.
          * Words are separated by one or more whitespaces.
+         *
          * @param data Data for calculating
          */
         public void calculateReset(String data) {
@@ -180,6 +191,7 @@ public class CommandWc implements AbstractCommand {
          * Write counters values in the following format:
          * <tab><lines><tab><words><tab><characters>
          * to string.
+         *
          * @return String with info described above.
          */
         public String dump() {
@@ -194,6 +206,7 @@ public class CommandWc implements AbstractCommand {
          * Write counters values in the following format:
          * <tab><lines><tab><words><tab><characters> <filename>
          * to string.
+         *
          * @param filename Filename
          * @return String with info described above.
          */
@@ -205,6 +218,7 @@ public class CommandWc implements AbstractCommand {
          * Write counters values in the following format:
          * <tab><lines><tab><words><tab><characters> total
          * to string.
+         *
          * @return String with info described above.
          */
         public String dumpTotal() {

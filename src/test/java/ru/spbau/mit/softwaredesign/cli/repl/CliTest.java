@@ -6,6 +6,7 @@ import org.junit.Test;
 import ru.spbau.mit.softwaredesign.cli.errors.*;
 import ru.spbau.mit.softwaredesign.cli.pipe.InputBuffer;
 import ru.spbau.mit.softwaredesign.cli.pipe.OutputBuffer;
+import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
 
 import java.io.*;
 
@@ -115,12 +116,13 @@ public class CliTest {
 
     @Test
     public void many_cats_in_a_row_makes_no_effects() throws FileNotFoundException, CliException {
-        String filename = "cattest.txt";
+        String curDir = BoundVariablesStorage.getCurrentPath();
+        String filename = curDir + "/" + "cattest.txt";
         PrintWriter out = new PrintWriter(filename);
         out.write(testData);
         out.close();
 
-        String filename2 = "cattest2.txt";
+        String filename2 = curDir + "/" + "cattest2.txt";
         out = new PrintWriter(filename2);
         out.write(testData);
         out.close();
@@ -138,18 +140,19 @@ public class CliTest {
 
     @Test
     public void pwd_as_the_last_block_prints_only_current_directory() throws CliException, FileNotFoundException {
-        String filename = "cattest.txt";
+        String curDir = BoundVariablesStorage.getCurrentPath();
+        String filename = curDir + "/" + "cattest.txt";
         PrintWriter out = new PrintWriter(filename);
         out.write(testData);
         out.close();
 
-        String filename2 = "cattest2.txt";
+        String filename2 = curDir + "/" + "cattest2.txt";
         out = new PrintWriter(filename2);
         out.write(testData);
         out.close();
 
         Cli.execute("wc cattest.txt cattest2.txt | cat | cat | cat|cat|    cat  |  cat | pwd");
-        assertEquals(outContent.toString(), System.getProperty("user.dir") + System.getProperty("line.separator"));
+        assertEquals(outContent.toString(), curDir + System.getProperty("line.separator"));
         try {
             outContent.close();
         } catch (IOException e) {

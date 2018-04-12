@@ -1,6 +1,7 @@
 package ru.spbau.mit.softwaredesign.cli.commands;
 
 import ru.spbau.mit.softwaredesign.cli.pipe.OutputBuffer;
+import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
 
 import java.util.List;
 
@@ -9,7 +10,8 @@ import java.util.List;
  */
 public class CommandPwd implements AbstractCommand {
 
-    public CommandPwd() {}
+    public CommandPwd() {
+    }
 
     /**
      * Implements "pwd" function without parameters.
@@ -17,7 +19,7 @@ public class CommandPwd implements AbstractCommand {
      */
     @Override
     public void execute() {
-        OutputBuffer.add(System.getProperty("user.dir"));
+        OutputBuffer.add(BoundVariablesStorage.getCurrentPath());
         OutputBuffer.add(System.getProperty("line.separator"));
     }
 
