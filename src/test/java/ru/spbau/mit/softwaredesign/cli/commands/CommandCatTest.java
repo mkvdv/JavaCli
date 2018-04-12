@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.spbau.mit.softwaredesign.cli.pipe.InputBuffer;
 import ru.spbau.mit.softwaredesign.cli.pipe.OutputBuffer;
+import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
 
 import java.io.*;
 import java.util.Arrays;
@@ -14,9 +15,8 @@ import static org.junit.Assert.assertEquals;
 
 public class CommandCatTest {
 
-    private CommandCat commandCat;
-
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private CommandCat commandCat;
     private String testData;
 
     @Before
@@ -52,7 +52,9 @@ public class CommandCatTest {
     @Test
     public void single_cat_with_arguments_reads_file_and_prints_it_to_output() {
         try {
-            String filename = "cattest.txt";
+            String curDir = BoundVariablesStorage.getCurrentPath();
+            String filename = curDir + "/" + "cattest.txt";
+
             PrintWriter out = new PrintWriter(filename);
             out.write(testData);
             out.close();
@@ -91,12 +93,14 @@ public class CommandCatTest {
     @Test
     public void single_cat_with_arguments_notifies_about_absence_of_file() {
         try {
-            String filename = "cattest.txt";
+            String curDir = BoundVariablesStorage.getCurrentPath();
+            String filename = curDir + "/" + "cattest.txt";
+
             PrintWriter out = new PrintWriter(filename);
             out.write(testData);
             out.close();
 
-            String filename2 = "cattest3.txt";
+            String filename2 = curDir + "/" + "cattest3.txt";
 
             commandCat.execute(Arrays.asList(filename, filename2));
             OutputBuffer.print();

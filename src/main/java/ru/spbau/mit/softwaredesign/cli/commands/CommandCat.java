@@ -1,9 +1,11 @@
 package ru.spbau.mit.softwaredesign.cli.commands;
 
 import ru.spbau.mit.softwaredesign.cli.errors.ErrorMessage;
+import ru.spbau.mit.softwaredesign.cli.errors.WrongArgumentException;
 import ru.spbau.mit.softwaredesign.cli.pipe.BlockCounter;
 import ru.spbau.mit.softwaredesign.cli.pipe.InputBuffer;
 import ru.spbau.mit.softwaredesign.cli.pipe.OutputBuffer;
+import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,13 +20,14 @@ import java.util.List;
  */
 public class CommandCat implements AbstractCommand {
 
-    public CommandCat() {}
+    public CommandCat() {
+    }
 
     /**
      * Implements "cat" function without parameters.
      * Behavior depends of position of this command in the pipeline:
-     *  - if this is the first command in the pipeline, then repeat the following user input.
-     *  - otherwise redirect data from input buffer to output buffer.
+     * - if this is the first command in the pipeline, then repeat the following user input.
+     * - otherwise redirect data from input buffer to output buffer.
      *
      * @throws IOException for the case of input/output error
      */
@@ -51,6 +54,13 @@ public class CommandCat implements AbstractCommand {
     public void execute(List<String> filenames) {
         Charset charset = Charset.forName("UTF-8");
         for (String filename : filenames) {
+            try {
+                filename = BoundVariablesStorage.getCorrectAbsolutePathOfFile(filename).getAbsolutePath();
+            } catch (WrongArgumentException e) {
+                ErrorMessage.print(ErrorMessage.FILE_NOT_FOUND, "cat: " + filename);
+                continue;
+            }
+
             try (BufferedReader reader = Files.newBufferedReader(Paths.get(filename), charset)) {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -66,7 +76,7 @@ public class CommandCat implements AbstractCommand {
     /**
      * Implements behavior when no arguments were passed and this is the first command in pipeline.
      * Simply redirects console input to output.
-     *
+     * <p>
      * If it is the last block, print every line immediately.
      *
      * @throws IOException for the case of input/output error

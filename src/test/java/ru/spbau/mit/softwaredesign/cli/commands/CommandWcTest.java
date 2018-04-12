@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.spbau.mit.softwaredesign.cli.pipe.InputBuffer;
 import ru.spbau.mit.softwaredesign.cli.pipe.OutputBuffer;
+import ru.spbau.mit.softwaredesign.cli.utils.BoundVariablesStorage;
 
 import java.io.*;
 import java.util.Arrays;
@@ -14,9 +15,8 @@ import static org.junit.Assert.assertEquals;
 
 public class CommandWcTest {
 
-    private CommandWc commandWc;
-
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private CommandWc commandWc;
     private String testData;
     private String expectedData;
     private String expectedTotal;
@@ -56,7 +56,8 @@ public class CommandWcTest {
     @Test
     public void single_wc_with_arguments_counts_from_file_and_prints_results_to_output() {
         try {
-            String filename = "cattest.txt";
+            String curDir = BoundVariablesStorage.getCurrentPath();
+            String filename = curDir + "/" + "cattest.txt";
             PrintWriter out = new PrintWriter(filename);
             out.write(testData);
             out.close();
@@ -73,12 +74,13 @@ public class CommandWcTest {
     @Test
     public void single_wc_with_arguments_counts_many_files_and_prints_results_to_output_with_total() {
         try {
-            String filename = "cattest.txt";
+            String curDir = BoundVariablesStorage.getCurrentPath();
+            String filename = curDir + "/" + "cattest.txt";
             PrintWriter out = new PrintWriter(filename);
             out.write(testData);
             out.close();
 
-            String filename2 = "cattest2.txt";
+            String filename2 = curDir + "/" + "cattest2.txt";
             out = new PrintWriter(filename2);
             out.write(testData);
             out.close();
@@ -97,12 +99,13 @@ public class CommandWcTest {
     @Test
     public void single_wc_with_arguments_notifies_about_absence_of_file() {
         try {
-            String filename = "cattest.txt";
+            String curDir = BoundVariablesStorage.getCurrentPath();
+            String filename = curDir + "/" + "cattest.txt";
             PrintWriter out = new PrintWriter(filename);
             out.write(testData);
             out.close();
 
-            String filename2 = "cattest3.txt";
+            String filename2 = curDir + "/" + "cattest3.txt";
 
             commandWc.execute(Arrays.asList(filename, filename2));
             OutputBuffer.print();
